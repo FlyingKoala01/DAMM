@@ -14,7 +14,7 @@ with app.app_context():
     db.create_all()
 
 # Connect to the database and populate them
-conn = sqlite3.connect('app/DAMM.db')
+conn = sqlite3.connect('app/damm.db')
 
 with open('db_seed.sql', 'r') as f:
     sql = f.read().format(ENCRYPTED_DEFAULT_PWD.decode('utf-8'))

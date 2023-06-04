@@ -1,88 +1,183 @@
-{% extends 'base/logged_in.html.j2' %}
+{% extends 'base/base.html.j2' %}
 
 {% block body %}
-
-{% with
-  h1_text=_('Service list'),
-  left_button_text=_('New service'),
-  left_button_url=url_for('.servers.newserver'),
-  search_form=search_form
-%}
-  {% include 'includes/title.html.j2' %}
-{% endwith %}
-
-<div id="card-list" class="flex justify-center items-center">
-  {% if serverlist|length == 0 %}
-    <div class="p-5 bg-white bg-opacity-50 rounded-lg flex items-center justify-center border-2 border-black">
-      <p class="text-center text-red-800 font-bold">{{_('Sorry! Looks like there are no matches with your search. Try again!')}}</p>
-    </div>
-  {%else%}
-
-  {% for eachserver in serverlist %}
-  <article class="{{ 'active' if eachserver.status else '' }}" data-id="{{ eachserver.id }}">
-    <a href="{{ url_for( '.servers.edit' , id=eachserver.id|int ) }}">
-      <h2 class="p-2">{{ eachserver.name|e }}</h2>
-      <div class="flex">
-        <div class="w-8/12">
-          <span class="state-off text-red-500 text-xl">
-            <i class="fa fa-times"></i>
-            {{ _('Off') }}
-          </span>
-          <span class="state-processing text-gray-500 text-xl">
-            <i class="fa fa-spinner animate-spin"></i>
-            .....
-          </span>
-          <span class="state-on text-green-500 text-xl">
-            <i class="fa fa-check"></i>
-            {{ _('Active') }}
-          </span>
-          <br />
-          <br />
-
-          {% if current_user.admin %}
-            <button class="start-button
-              bg-green-400 hover:bg-green-600 p-2 rounded text-white status-off status-button">
-              <i class="fa fa-power-off"></i>
-              {{ _('Start') }}
-            </button>
-            <button class="cancel-button
-              bg-gray-400 hover:bg-gray-600 p-2 rounded text-white status-off status-button">
-              <i class="fa fa-spinner animate-spin"></i>
-              {{ _('Cancel') }}
-            </button>
-            <button class="processing-button
-              bg-gray-400 p-2 rounded text-white status-off status-button cursor-not-allowed" disabled>
-              <i class="fa fa-spinner animate-spin"></i>
-              {{ _('Processing') }}
-            </button>
-            <button class="stop-button
-              bg-red-400 hover:bg-red-600 p-2 rounded text-white status-off status-button">
-              <i class="fa fa-power-off"></i>
-              {{ _('Stop') }}
-            </button>
-          {% endif %}
-
+<section class="bg-gray-50 py-3 sm:py-5">
+  <div class="px-4 mx-auto max-w-screen-2xl lg:px-12">
+    <div class="relative overflow-hidden bg-white shadow-md sm:rounded-lg">
+      <div
+        class="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
+        <div class="flex items-center flex-1 space-x-4">
+          <h5>
+            <span class="text-gray-500">All Bars:</span>
+            <span class="">{{ bars|length }}</span>
+          </h5>
         </div>
-        <div class="w-4/12 flex justify-center items-center">
-          <picture>
-            {% if eachserver.image|e is not none %}
-              <source srcset="{{ eachserver.image|e }}" />
-            {% endif %}
-            <img src="{{ url_for('static', filename='images/no-server-placeholder.png') }}" alt="placeholder"
-              onerror="onError.call(this)" />
-          </picture>
+        <div
+          class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+          <button type="button"
+            class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 ">
+            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none"
+              viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Update stocks 1/250
+          </button>
+          <button type="button"
+            class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 ">
+            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
+              stroke-width="2" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            Export
+          </button>
         </div>
       </div>
-    </a>
-  </article>
-  {% endfor %}
-  <article class="new items-center justify-center flex">
-    <a href="{{ url_for('.servers.newserver') }}">
-      <h2>+</h2>
-    </a>
-  </article>
-  {%endif%}
-</div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th></th>
+              <th scope="col" class="px-4 py-3">Bar</th>
+              <th scope="col" class="px-4 py-3">Sales/Day</th>
+              <th scope="col" class="px-4 py-3">Sales/Month</th>
+              <th scope="col" class="px-4 py-3">Rating</th>
+              <th scope="col" class="px-4 py-3">Sales</th>
+              <th scope="col" class="px-4 py-3">Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b  hover:bg-gray-100 ">
+              {% for eachbar in bars %}
+
+              <td class="w-4 px-4 py-3">
+                <div class="flex items-center">
+                  <input id="checkbox-table-search-1" type="checkbox" onclick="event.stopPropagation()"
+                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500   focus:ring-2  ">
+                  <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                </div>
+              </td>
+              <th scope="row" class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
+                {{ eachbar.name }}
+              </th>
+              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">1.47</td>
+              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">0.47</td>
+              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
+                <div class="flex items-center">
+                  {% set full_beers = eachbar.grade | int %}
+                  {% set half_beer = eachbar.grade - full_beers > 0.5 %}
+
+                  {% for _ in range(full_beers) %}
+                  <img src="{{ url_for('static', filename='images/beer.svg') }}" alt="beer"
+                    class="w-5 h-5 transform scale-y-[-1]">
+                  {% endfor %}
+
+                  {% if half_beer %}
+                  <img src="{{ url_for('static', filename='images/beer-half.svg') }}" alt="beer-half"
+                    class="w-5 h-5 mr-2 transform scale-y-[-1]">
+                  {% endif %}
+
+                  <span class="ml-1 text-gray-500 ">{{ eachbar.grade }}</span>
+                </div>
+
+              </td>
+              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
+                <div class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
+                    class="w-5 h-5 mr-2 text-gray-400" aria-hidden="true">
+                    <path
+                      d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
+                  </svg>
+                  {{ eachbar.total_sales }}
+                </div>
+              </td>
+              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
+                <div class="flex items-center">
+                  {% if eachbar.progress > 1 %}
+                  <img src="{{ url_for('static', filename='images/arrow-double-up.svg') }}" alt="double-up"
+                    class="w-3 h-3 mr-1 text-green-50">
+                  {% elif eachbar.progress > 0%}
+                  <img src="{{ url_for('static', filename='images/arrow-up.svg') }}" alt="up"
+                    class="w-3 h-3 mr-1 text-green">
+                  {% elif eachbar.progress == 0 %}
+                  <img src="{{ url_for('static', filename='images/equal.svg') }}" alt="equal" class="w-3 h-3 mr-1">
+                  {% elif eachbar.progress < -1 %} <img
+                    src="{{ url_for('static', filename='images/arrow-double-up.svg') }}" alt="down"
+                    class="w-3 h-3 mr-1 text-red transform rotate-180">
+                    {% elif eachbar.progress < 0%} <img src="{{ url_for('static', filename='images/arrow-up.svg') }}"
+                      alt="down" class="w-3 h-3 mr-1 text-red transform rotate-180">
+                      {% endif %}
+                      <span
+                        class="ml-1 {% if eachbar.progress > 0 %}text-green-500{% elif eachbar.progress < 0 %}text-red-500{% else %}text-gray-500{% endif %}">
+                        {{ eachbar.progress }}
+                      </span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+      <nav class="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0"
+        aria-label="Table navigation">
+        <span class="text-sm font-normal text-gray-500 ">
+          Showing
+          <span class="font-semibold text-gray-900 ">1-10</span>
+          of
+          <span class="font-semibold text-gray-900 ">1000</span>
+        </span>
+        <ul class="inline-flex items-stretch -space-x-px">
+          <li>
+            <a href="#"
+              class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">
+              <span class="sr-only">Previous</span>
+              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a href="#"
+              class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">1</a>
+          </li>
+          <li>
+            <a href="#"
+              class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">2</a>
+          </li>
+          <li>
+            <a href="#" aria-current="page"
+              class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 ">3</a>
+          </li>
+          <li>
+            <a href="#"
+              class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">...</a>
+          </li>
+          <li>
+            <a href="#"
+              class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">100</a>
+          </li>
+          <li>
+            <a href="#"
+              class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">
+              <span class="sr-only">Next</span>
+              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
 
 <script>
   function onError() {
@@ -90,8 +185,5 @@
     this.parentNode.children[0].srcset = this.parentNode.children[1].srcset = this.src;
   }
 </script>
-
-<script class="text-green-600" src="{{ url_for('static', filename='js/server_toggle.js') }}"></script>
-<script class="text-green-600" src="{{ url_for('static', filename='js/server_update.js') }}"></script>
 
 {% endblock %}
