@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, url_for, redirect, make_response, send_from_directory, request
 from ..models import Bar
+from sqlalchemy import desc, asc
 
 app = Blueprint('main', __name__)
 
@@ -11,7 +12,22 @@ def index():
 def leaderboard():
     page = request.args.get('page', 1, type=int)
     per_page = 8
-    bars_page = Bar.query.paginate(page, per_page, error_out=False)
+    sort_by = request.args.get('sort_by', 'name', type=str)  # Default sort by 'name'
+    sort_order = request.args.get('sort_order', 'asc', type=str)  # Default sort order 'asc'
+    
+    column_mapping = {
+        'name': Bar.name,
+        'grade': Bar.grade,  # Declare 'rating' as a textual expression
+        'sales': Bar.total_sales,
+        'progress': Bar.progress
+    }
+
+    # Retrieve bars from the database and apply sorting
+    if sort_order == 'desc':
+        bars_page = Bar.query.order_by(desc(column_mapping[sort_by])).paginate(page, per_page, error_out=False)
+    else:
+        bars_page = Bar.query.order_by(asc(column_mapping[sort_by])).paginate(page, per_page, error_out=False)
+    
     return render_template('pages/leaderboard.html.j2', bars_page=bars_page)
 
 

@@ -39,14 +39,27 @@
           <thead class="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
               <th></th>
-              <th scope="col" class="px-4 py-3">Bar</th>
-              <th scope="col" class="px-4 py-3">Sales/Day</th>
-              <th scope="col" class="px-4 py-3">Sales/Month</th>
-              <th scope="col" class="px-4 py-3">Rating</th>
-              <th scope="col" class="px-4 py-3">Sales</th>
-              <th scope="col" class="px-4 py-3">Progress</th>
+              <th scope="col" class="px-4 py-3">
+                <a href="{{ url_for('.leaderboard', sort_by='name', sort_order='asc') }}">Bar</a>
+              </th>
+              <th scope="col" class="px-4 py-3">
+                <a href="{{ url_for('.leaderboard', sort_by='sales_day', sort_order='asc') }}">Sales/Day</a>
+              </th>
+              <th scope="col" class="px-4 py-3">
+                <a href="{{ url_for('.leaderboard', sort_by='sales_month', sort_order='asc') }}">Sales/Month</a>
+              </th>
+              <th scope="col" class="px-4 py-3">
+                <a href="{{ url_for('.leaderboard', sort_by='grade', sort_order='asc') }}">Grade</a>
+              </th>
+              <th scope="col" class="px-4 py-3">
+                <a href="{{ url_for('.leaderboard', sort_by='sales', sort_order='asc') }}">Sales</a>
+              </th>
+              <th scope="col" class="px-4 py-3">
+                <a href="{{ url_for('.leaderboard', sort_by='progress', sort_order='asc') }}">Progress</a>
+              </th>
             </tr>
           </thead>
+
           <tbody>
             <tr class="border-b  hover:bg-gray-100 ">
               {% for eachbar in bars_page.items %}
@@ -70,12 +83,12 @@
 
                   {% for _ in range(full_beers) %}
                   <img src="{{ url_for('static', filename='images/beer.svg') }}" alt="beer"
-                    class="w-5 h-5 transform scale-y-[-1]">
+                    class="w-5 h-5 transform scale-y-[-1] rotate-180">
                   {% endfor %}
 
                   {% if half_beer %}
                   <img src="{{ url_for('static', filename='images/beer-half.svg') }}" alt="beer-half"
-                    class="w-5 h-5 mr-2 transform scale-y-[-1]">
+                    class="w-5 h-5 mr-2 transform scale-y-[-1] rotate-180">
                   {% endif %}
 
                   <span class="ml-1 text-gray-500 ">{{ eachbar.grade }}</span>
