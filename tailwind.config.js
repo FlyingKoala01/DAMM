@@ -14,6 +14,9 @@ module.exports = {
       minWidth:{
       },
       screens:{
+        'xs': {'max':'639px'},
+        'xm': {'max':'768px'},
+        'xg': {'max':'1024px'},
       },
       keyframes: {
       },

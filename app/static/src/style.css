@@ -10,7 +10,7 @@
 @layer components {
     /* ============================================= */
     header {
-        @apply bg-lp-1 p-4 shadow-md flex flex-wrap items-center justify-center md:justify-between;
+        @apply p-3 bg-[#C4011F] shadow-md flex flex-wrap items-center justify-center md:justify-between;
     }
 
     header p {
@@ -87,7 +87,7 @@
 
     /* ============================================= */
     footer {
-        @apply absolute bottom-0 h-20 inset-x-0 p-4 shadow md:p-6 bg-gray-800 xm:text-center text-gray-400 box-border;
+        @apply absolute bottom-0 h-20 inset-x-0 p-4 shadow md:p-6 xm:text-center text-gray-400 box-border;
     }
 
     footer>span {

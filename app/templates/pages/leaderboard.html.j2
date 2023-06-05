@@ -9,7 +9,7 @@
         <div class="flex items-center flex-1 space-x-4">
           <h5>
             <span class="text-gray-500">All Bars:</span>
-            <span class="">{{ bars|length }}</span>
+            <span class="">{{ bars_page.total }}</span>
           </h5>
         </div>
         <div
@@ -49,7 +49,7 @@
           </thead>
           <tbody>
             <tr class="border-b  hover:bg-gray-100 ">
-              {% for eachbar in bars %}
+              {% for eachbar in bars_page.items %}
 
               <td class="w-4 px-4 py-3">
                 <div class="flex items-center">
@@ -116,24 +116,30 @@
               </td>
             </tr>
             {% endfor %}
-
           </tbody>
         </table>
       </div>
       <nav class="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0"
         aria-label="Table navigation">
-        <span class="text-sm font-normal text-gray-500 ">
+        <span class="text-sm font-normal text-gray-500">
           Showing
-          <span class="font-semibold text-gray-900 ">1-10</span>
+          {% if bars_page.has_prev %}
+          <span class="font-semibold text-gray-900">{{ (bars_page.prev_num - 1) * bars_page.per_page + 1 }}-{{
+            (bars_page.prev_num - 1) * bars_page.per_page + bars_page.items|length }}</span>
+          {% else %}
+          <span class="font-semibold text-gray-900">1-{{
+            bars_page.items|length }}</span>
+          {% endif %}
           of
-          <span class="font-semibold text-gray-900 ">1000</span>
+          <span class="font-semibold text-gray-900">{{ bars_page.total }}</span>
         </span>
         <ul class="inline-flex items-stretch -space-x-px">
+          {% if bars_page.has_prev %}
           <li>
-            <a href="#"
-              class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">
+            <a href="{{ url_for('.leaderboard', page=bars_page.prev.num) }}"
+              class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
               <span class="sr-only">Previous</span>
-              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd"
                   d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -141,38 +147,31 @@
               </svg>
             </a>
           </li>
+          {% endif %}
+          {% for page_num in bars_page.iter_pages() %}
+          {% if page_num %}
           <li>
-            <a href="#"
-              class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">1</a>
+            <a href="{{ url_for('.leaderboard', page=page_num) }}"
+              class="flex items-center justify-center px-3 py-2 text-sm leading-tight {{ 'text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700' if page_num == bars_page.page else 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700' }}">
+              {{ page_num }}
+            </a>
           </li>
+          {% endif %}
+          {% endfor %}
+          {% if bars_page.has_next %}
           <li>
-            <a href="#"
-              class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">2</a>
-          </li>
-          <li>
-            <a href="#" aria-current="page"
-              class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 ">3</a>
-          </li>
-          <li>
-            <a href="#"
-              class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">...</a>
-          </li>
-          <li>
-            <a href="#"
-              class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">100</a>
-          </li>
-          <li>
-            <a href="#"
-              class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">
+            <a href="{{ url_for('.leaderboard', page=bars_page.next_num) }}"
+              class="flex items-center justify-center h-full py-1.5 px-3 -ml-px text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
               <span class="sr-only">Next</span>
-              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                   clip-rule="evenodd" />
               </svg>
             </a>
           </li>
+          {% endif %}
         </ul>
       </nav>
     </div>
