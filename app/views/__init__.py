@@ -12,22 +12,23 @@ def index():
 def leaderboard():
     page = request.args.get('page', 1, type=int)
     per_page = 8
-    sort_by = request.args.get('sort_by', 'name', type=str)  # Default sort by 'name'
-    sort_order = request.args.get('sort_order', 'asc', type=str)  # Default sort order 'asc'
+    sort_by = request.args.get('sort_by', 'name', type=str)
+    sort_order = request.args.get('sort_order', 'asc', type=str)
     
     column_mapping = {
         'name': Bar.name,
-        'grade': Bar.grade,  # Declare 'rating' as a textual expression
+        'grade': Bar.grade,
         'sales': Bar.total_sales,
         'progress': Bar.progress
     }
 
-    # Retrieve bars from the database and apply sorting
     if sort_order == 'desc':
         bars_page = Bar.query.order_by(desc(column_mapping[sort_by])).paginate(page, per_page, error_out=False)
-    else:
+    elif sort_order == 'desc':
         bars_page = Bar.query.order_by(asc(column_mapping[sort_by])).paginate(page, per_page, error_out=False)
-    
+    else:
+        bars_page = Bar.query.paginate(page, per_page, error_out=False)
+
     return render_template('pages/leaderboard.html.j2', bars_page=bars_page)
 
 

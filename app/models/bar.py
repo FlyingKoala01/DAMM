@@ -8,3 +8,4 @@ class Bar(db.Model):
     grade = db.Column(db.Integer)
     total_sales = db.Column(db.Integer)
     progress = db.Column(db.Integer)
+    position = db.Column(db.Integer)

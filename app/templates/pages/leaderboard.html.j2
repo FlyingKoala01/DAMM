@@ -2,7 +2,7 @@
 
 {% block body %}
 <section class="bg-gray-50 py-3 sm:py-5">
-  <div class="px-4 mx-auto max-w-screen-2xl lg:px-12">
+  <div class="px-4 mx-auto w-2/3 lg:px-12">
     <div class="relative overflow-hidden bg-white shadow-md sm:rounded-lg">
       <div
         class="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
@@ -38,15 +38,11 @@
         <table class="w-full text-sm text-left text-gray-500">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th></th>
+              <th scope="col" class="px-4 py-3">
+                <a href="{{ url_for('.leaderboard', sort_by='position', sort_order='asc') }}">Position</a>
+              </th>
               <th scope="col" class="px-4 py-3">
                 <a href="{{ url_for('.leaderboard', sort_by='name', sort_order='asc') }}">Bar</a>
-              </th>
-              <th scope="col" class="px-4 py-3">
-                <a href="{{ url_for('.leaderboard', sort_by='sales_day', sort_order='asc') }}">Sales/Day</a>
-              </th>
-              <th scope="col" class="px-4 py-3">
-                <a href="{{ url_for('.leaderboard', sort_by='sales_month', sort_order='asc') }}">Sales/Month</a>
               </th>
               <th scope="col" class="px-4 py-3">
                 <a href="{{ url_for('.leaderboard', sort_by='grade', sort_order='asc') }}">Grade</a>
@@ -66,16 +62,12 @@
 
               <td class="w-4 px-4 py-3">
                 <div class="flex items-center">
-                  <input id="checkbox-table-search-1" type="checkbox" onclick="event.stopPropagation()"
-                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500   focus:ring-2  ">
-                  <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                  {{eachbar.position}}
                 </div>
               </td>
               <th scope="row" class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
                 {{ eachbar.name }}
               </th>
-              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">1.47</td>
-              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">0.47</td>
               <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
                 <div class="flex items-center">
                   {% set full_beers = eachbar.grade | int %}
@@ -149,7 +141,7 @@
         <ul class="inline-flex items-stretch -space-x-px">
           {% if bars_page.has_prev %}
           <li>
-            <a href="{{ url_for('.leaderboard', page=bars_page.prev.num) }}"
+            <a href="{{ url_for('.leaderboard', page=bars_page.prev_num) }}"
               class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
               <span class="sr-only">Previous</span>
               <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
