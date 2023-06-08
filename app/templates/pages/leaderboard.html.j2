@@ -38,23 +38,99 @@
         <table class="w-full text-sm text-left text-gray-500">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" class="px-4 py-3">
-                <a href="{{ url_for('.leaderboard', sort_by='position', sort_order='asc') }}">Position</a>
+              <th scope="col" class="p-3 w-28">
+                <a
+                  href="{{ url_for('.leaderboard', sort_by='position', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Position
+                  {% if sort_by == 'position' %}
+                  {% if sort_order == 'asc' %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                  </svg>
+                  {% else %}
+                  <svg class="w-3 h-3 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
+                  </svg>
+                  {% endif %}
+                  {% endif %}
+                </a>
               </th>
               <th scope="col" class="px-4 py-3">
-                <a href="{{ url_for('.leaderboard', sort_by='name', sort_order='asc') }}">Bar</a>
+                <a
+                  href="{{ url_for('.leaderboard', sort_by='name', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Bar
+                  {% if sort_by == 'name' %}
+                  {% if sort_order == 'asc' %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                  </svg>
+                  {% else %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
+                  </svg>
+                  {% endif %}
+                  {% endif %}
+                </a>
               </th>
               <th scope="col" class="px-4 py-3">
-                <a href="{{ url_for('.leaderboard', sort_by='grade', sort_order='asc') }}">Grade</a>
+                <a
+                  href="{{ url_for('.leaderboard', sort_by='grade', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Grade
+                  {% if sort_by == 'grade' %}
+                  {% if sort_order == 'asc' %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                  </svg>
+                  {% else %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
+                  </svg>
+                  {% endif %}
+                  {% endif %}
+                </a>
               </th>
               <th scope="col" class="px-4 py-3">
-                <a href="{{ url_for('.leaderboard', sort_by='sales', sort_order='asc') }}">Sales</a>
+                <a
+                  href="{{ url_for('.leaderboard', sort_by='sales', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Sales
+                  {% if sort_by == 'sales' %}
+                  {% if sort_order == 'asc' %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                  </svg>
+                  {% else %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
+                  </svg>
+                  {% endif %}
+                  {% endif %}
+                </a>
               </th>
               <th scope="col" class="px-4 py-3">
-                <a href="{{ url_for('.leaderboard', sort_by='progress', sort_order='asc') }}">Progress</a>
+                <a
+                  href="{{ url_for('.leaderboard', sort_by='progress', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Progress
+                  {% if sort_by == 'progress' %}
+                  {% if sort_order == 'asc' %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                  </svg>
+                  {% else %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
+                  </svg>
+                  {% endif %}
+                  {% endif %}
+                </a>
               </th>
             </tr>
           </thead>
+
 
           <tbody>
             <tr class="border-b  hover:bg-gray-100 ">
@@ -141,7 +217,7 @@
         <ul class="inline-flex items-stretch -space-x-px">
           {% if bars_page.has_prev %}
           <li>
-            <a href="{{ url_for('.leaderboard', page=bars_page.prev_num) }}"
+            <a href="{{ url_for('.leaderboard', page=bars_page.prev_num, sort_by=sort_by, sort_order=sort_order) }}"
               class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
               <span class="sr-only">Previous</span>
               <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
@@ -156,7 +232,7 @@
           {% for page_num in bars_page.iter_pages() %}
           {% if page_num %}
           <li>
-            <a href="{{ url_for('.leaderboard', page=page_num) }}"
+            <a href="{{ url_for('.leaderboard', page=page_num, sort_by=sort_by, sort_order=sort_order) }}"
               class="flex items-center justify-center px-3 py-2 text-sm leading-tight {{ 'text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700' if page_num == bars_page.page else 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700' }}">
               {{ page_num }}
             </a>
@@ -165,7 +241,7 @@
           {% endfor %}
           {% if bars_page.has_next %}
           <li>
-            <a href="{{ url_for('.leaderboard', page=bars_page.next_num) }}"
+            <a href="{{ url_for('.leaderboard', page=bars_page.next_num, sort_by=sort_by, sort_order=sort_order) }}"
               class="flex items-center justify-center h-full py-1.5 px-3 -ml-px text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
               <span class="sr-only">Next</span>
               <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
