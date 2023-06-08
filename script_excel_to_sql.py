@@ -18,26 +18,32 @@ def main():
             codi_dist = row["CODI DIST (AGRUPACION 2)"]
             agrup_nivel_2 = row["Agrup. Nivel 2"]
             establecimiento = row["Establecimiento"]
+            esta = establecimiento.split(" ",1)
+            id_establecimiento = esta[0]
+            nombre_establecimiento = esta[1]
             producto = row["Material Precio"]
+            prod = producto.split(" ",1)
+            id_producto = prod[0]
+            nombre_producto = prod[1]
             sector_producto = row["Sector"]
             total_producto = row["TOTAL"]
 
             existing_distribuidor = cursor.execute(f"SELECT ID FROM Distribuidor WHERE ID = {codi_dist}").fetchone()
-            existing_establecimiento = cursor.execute("SELECT nombre FROM Establecimiento WHERE nombre = (?)", (establecimiento,)).fetchone()
-            existing_producto = cursor.execute("SELECT codigo FROM Productos WHERE codigo = (?)", (producto,)).fetchone()
-            existing_total_producto = cursor.execute("SELECT codigo_producto, nombre_establecimiento FROM Total_Prod_estable  WHERE codigo_producto = (?) and nombre_establecimiento = (?) ", (producto,establecimiento)).fetchone()
+            existing_establecimiento = cursor.execute("SELECT ID FROM Establecimiento WHERE ID = (?)", (id_establecimiento,)).fetchone()
+            existing_producto = cursor.execute("SELECT ID FROM Productos WHERE ID = (?)", (id_producto,)).fetchone()
+            existing_total_producto = cursor.execute("SELECT id_producto, id_establecimiento FROM Total_Prod_estable  WHERE id_producto = (?) and id_establecimiento = (?) ", (id_producto,id_establecimiento)).fetchone()
             
             if existing_distribuidor is None:
                 cursor.execute("INSERT INTO Distribuidor (ID, nombre) VALUES (?, ?)", (codi_dist, agrup_nivel_2))
             
             if existing_establecimiento is None:
-                cursor.execute("INSERT INTO Establecimiento (nombre, id_distribuidor) VALUES (?, ?)", (establecimiento, codi_dist))
+                cursor.execute("INSERT INTO Establecimiento (ID, nombre, id_distribuidor) VALUES (?, ?, ?)", (id_establecimiento, nombre_establecimiento, codi_dist))
             
             if existing_producto is None:
-                cursor.execute("INSERT INTO Productos (codigo, sector) VALUES (?, ?)", (producto, sector_producto))
+                cursor.execute("INSERT INTO Productos (ID, nombre, sector) VALUES (?, ?, ?)", (id_producto, nombre_producto ,sector_producto))
 
             if existing_total_producto is None:
-                cursor.execute("INSERT INTO Total_Prod_estable (nombre_establecimiento, codigo_producto, total) VALUES (?, ?, ?)", (establecimiento, producto, total_producto))
+                cursor.execute("INSERT INTO Total_Prod_estable (id_establecimiento, id_producto, total) VALUES (?, ?, ?)", (id_establecimiento, id_producto, total_producto))
 
             for mes in df.columns[5:17]:
                 cantidad = row[mes]
@@ -45,8 +51,8 @@ def main():
                     cantidad = 0
                 
                 # Verificar si ja existeix un registre a la taula Prod_esta
-                if cursor.execute("SELECT nombre_establecimiento, codigo_producto, año_mes FROM Prod_esta WHERE nombre_establecimiento = ? AND codigo_producto = ? AND año_mes = ?", (establecimiento, producto, mes)).fetchone() is None:
-                    cursor.execute("INSERT INTO Prod_esta (nombre_establecimiento, codigo_producto, año_mes, cantidad) VALUES (?, ?, ?, ?)", (establecimiento, producto, mes, cantidad))
+                if cursor.execute("SELECT id_establecimiento, id_producto, año_mes FROM Prod_esta WHERE id_establecimiento = ? AND id_producto = ? AND año_mes = ?", (id_establecimiento, id_producto, mes)).fetchone() is None:
+                    cursor.execute("INSERT INTO Prod_esta (id_establecimiento, id_producto, año_mes, cantidad) VALUES (?, ?, ?, ?)", (id_establecimiento, id_producto, mes, cantidad))
 
     conn.commit()
     conn.close()
