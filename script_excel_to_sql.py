@@ -2,8 +2,9 @@ import pandas as pd
 import math
 import sqlite3
 import glob
+import random
 
-DATABASE = "damm.db"
+DATABASE = "app/damm.db"
 
 def main():
     files = glob.glob("*.xlsx")  # Obtinc la llista de tots els arxius Excel que tinc dins la carpeta actual
@@ -31,7 +32,7 @@ def main():
             existing_distribuidor = cursor.execute(f"SELECT id FROM Distribuidor WHERE id = {codi_dist}").fetchone()
             existing_establecimiento = cursor.execute("SELECT id FROM Establecimiento WHERE id = (?)", (id_establecimiento,)).fetchone()
             existing_producto = cursor.execute("SELECT id FROM Productos WHERE id = (?)", (id_producto,)).fetchone()
-            existing_total_producto = cursor.execute("SELECT id_producto, id_establecimiento FROM Total_Prod_estable  WHERE id_producto = (?) and id_establecimiento = (?) ", (id_producto,id_establecimiento)).fetchone()
+            existing_total_producto = cursor.execute("SELECT id_producto, id_establecimiento FROM Total__Prod_estable  WHERE id_producto = (?) and id_establecimiento = (?) ", (id_producto,id_establecimiento)).fetchone()
             
             if existing_distribuidor is None:
                 cursor.execute("INSERT INTO Distribuidor (id, nombre) VALUES (?, ?)", (codi_dist, agrup_nivel_2))
@@ -40,10 +41,10 @@ def main():
                 cursor.execute("INSERT INTO Establecimiento (id, nombre, id_distribuidor) VALUES (?, ?, ?)", (id_establecimiento, nombre_establecimiento, codi_dist))
             
             if existing_producto is None:
-                cursor.execute("INSERT INTO Productos (id, nombre, sector) VALUES (?, ?, ?)", (id_producto, nombre_producto ,sector_producto))
+                cursor.execute("INSERT INTO Productos (id, nombre, sector, peso) VALUES (?, ?, ?, ?)", (id_producto, nombre_producto ,sector_producto,random.randint(1,10)*0.1))
 
             if existing_total_producto is None:
-                cursor.execute("INSERT INTO Total_Prod_estable (id_establecimiento, id_producto, total) VALUES (?, ?, ?)", (id_establecimiento, id_producto, total_producto))
+                cursor.execute("INSERT INTO Total__Prod_estable (id_establecimiento, id_producto, total) VALUES (?, ?, ?)", (id_establecimiento, id_producto, total_producto))
 
             for mes in df.columns[5:17]:
                 cantidad = row[mes]
