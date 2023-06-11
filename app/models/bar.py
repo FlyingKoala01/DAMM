@@ -1,7 +1,7 @@
 from ..extensions import db
 
 class Bar(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    ID = db.Column(db.Integer, primary_key=True)
     position = db.Column(db.Integer)
     name = db.Column(db.String(80))
     latitude = db.Column(db.Integer)
