@@ -1,6 +1,6 @@
 from ..extensions import db
 
-class Total_Prod_estable(db.Model):
+class Establecimiento(db.Model):
     ID = db.Column(db.CHAR, primary_key=True)
     nombre = db.Column(db.CHAR)
     coordenades = db.Column(db.CHAR, nullable=True)
