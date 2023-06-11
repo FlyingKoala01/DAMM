@@ -23,10 +23,10 @@ def weightLocal(local,month=None,social_networks_grade=None):
 	cur=con.cursor()
 	if month==None:
 		data=cur.execute(f"select id_producto,sum(cantidad) from Prod_esta where id_establecimiento='{local}' group by id_producto;").fetchall()	
-		samples=cur.execute(f"select count(DISTINCT año_mes) from Prod_esta where id_establecimiento='{local}';").fetchone()[0]
+		samples=cur.execute(f"select count(DISTINCT year_month) from Prod_esta where id_establecimiento='{local}';").fetchone()[0]
 	else:
-		data=cur.execute(f"select id_producto,cantidad from Prod_esta where id_establecimiento='{local}' and año_mes like '{month}%';").fetchall()
-		samples=cur.execute(f"select count(DISTINCT año_mes) from Prod_esta where id_establecimiento='{local}' and año_mes like '{month}%';").fetchone()[0]
+		data=cur.execute(f"select id_producto,cantidad from Prod_esta where id_establecimiento='{local}' and year_month like '{month}%';").fetchall()
+		samples=cur.execute(f"select count(DISTINCT year_month) from Prod_esta where id_establecimiento='{local}' and year_month like '{month}%';").fetchone()[0]
 
 	con.close()
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 		print("Current grades will be replaced")
 	con=sqlite3.connect(DB_PATH)
 	cur=con.cursor()
-	bars=cur.execute("select ID from Establecimiento;").fetchall()
+	bars=cur.execute("select id from Establecimiento;").fetchall()
 	con.close()
 	results=[[] for i in range(len(months))]
 	
@@ -92,8 +92,8 @@ if __name__ == '__main__':
 	cur=con.cursor()
 	
 	for i,bar in enumerate(bars):
-		cur.execute(f"update Establecimiento set average_grade={avg[i]} where ID='{bar[0]}';")
-		cur.execute(f"update Establecimiento set Nota_{months[0]}={grades[0][i]},Nota_{months[1]}={grades[1][i]},Nota_{months[2]}={grades[2][i]},Nota_{months[3]}={grades[3][i]},Nota_{months[4]}={grades[4][i]},Nota_{months[5]}={grades[5][i]},Nota_{months[6]}={grades[6][i]},Nota_{months[7]}={grades[7][i]},Nota_{months[8]}={grades[8][i]},Nota_{months[9]}={grades[9][i]},Nota_{months[10]}={grades[10][i]},Nota_{months[11]}={grades[11][i]} where ID='{bar[0]}';")
+		cur.execute(f"update Establecimiento set average_grade={avg[i]} where id='{bar[0]}';")
+		cur.execute(f"update Establecimiento set Nota_{months[0]}={grades[0][i]},Nota_{months[1]}={grades[1][i]},Nota_{months[2]}={grades[2][i]},Nota_{months[3]}={grades[3][i]},Nota_{months[4]}={grades[4][i]},Nota_{months[5]}={grades[5][i]},Nota_{months[6]}={grades[6][i]},Nota_{months[7]}={grades[7][i]},Nota_{months[8]}={grades[8][i]},Nota_{months[9]}={grades[9][i]},Nota_{months[10]}={grades[10][i]},Nota_{months[11]}={grades[11][i]} where id='{bar[0]}';")
 	con.commit()
 	con.close()
 

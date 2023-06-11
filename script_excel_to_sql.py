@@ -3,7 +3,7 @@ import math
 import sqlite3
 import glob
 
-DATABASE = "damm.bd"
+DATABASE = "damm.db"
 
 def main():
     files = glob.glob("*.xlsx")  # Obtinc la llista de tots els arxius Excel que tinc dins la carpeta actual
@@ -28,19 +28,19 @@ def main():
             sector_producto = row["Sector"]
             total_producto = row["TOTAL"]
 
-            existing_distribuidor = cursor.execute(f"SELECT ID FROM Distribuidor WHERE ID = {codi_dist}").fetchone()
-            existing_establecimiento = cursor.execute("SELECT ID FROM Establecimiento WHERE ID = (?)", (id_establecimiento,)).fetchone()
-            existing_producto = cursor.execute("SELECT ID FROM Productos WHERE ID = (?)", (id_producto,)).fetchone()
+            existing_distribuidor = cursor.execute(f"SELECT id FROM Distribuidor WHERE id = {codi_dist}").fetchone()
+            existing_establecimiento = cursor.execute("SELECT id FROM Establecimiento WHERE id = (?)", (id_establecimiento,)).fetchone()
+            existing_producto = cursor.execute("SELECT id FROM Productos WHERE id = (?)", (id_producto,)).fetchone()
             existing_total_producto = cursor.execute("SELECT id_producto, id_establecimiento FROM Total_Prod_estable  WHERE id_producto = (?) and id_establecimiento = (?) ", (id_producto,id_establecimiento)).fetchone()
             
             if existing_distribuidor is None:
-                cursor.execute("INSERT INTO Distribuidor (ID, nombre) VALUES (?, ?)", (codi_dist, agrup_nivel_2))
+                cursor.execute("INSERT INTO Distribuidor (id, nombre) VALUES (?, ?)", (codi_dist, agrup_nivel_2))
             
             if existing_establecimiento is None:
-                cursor.execute("INSERT INTO Establecimiento (ID, nombre, id_distribuidor) VALUES (?, ?, ?)", (id_establecimiento, nombre_establecimiento, codi_dist))
+                cursor.execute("INSERT INTO Establecimiento (id, nombre, id_distribuidor) VALUES (?, ?, ?)", (id_establecimiento, nombre_establecimiento, codi_dist))
             
             if existing_producto is None:
-                cursor.execute("INSERT INTO Productos (ID, nombre, sector) VALUES (?, ?, ?)", (id_producto, nombre_producto ,sector_producto))
+                cursor.execute("INSERT INTO Productos (id, nombre, sector) VALUES (?, ?, ?)", (id_producto, nombre_producto ,sector_producto))
 
             if existing_total_producto is None:
                 cursor.execute("INSERT INTO Total_Prod_estable (id_establecimiento, id_producto, total) VALUES (?, ?, ?)", (id_establecimiento, id_producto, total_producto))
@@ -51,8 +51,8 @@ def main():
                     cantidad = 0
                 
                 # Verificar si ja existeix un registre a la taula Prod_esta
-                if cursor.execute("SELECT id_establecimiento, id_producto, año_mes FROM Prod_esta WHERE id_establecimiento = ? AND id_producto = ? AND año_mes = ?", (id_establecimiento, id_producto, mes)).fetchone() is None:
-                    cursor.execute("INSERT INTO Prod_esta (id_establecimiento, id_producto, año_mes, cantidad) VALUES (?, ?, ?, ?)", (id_establecimiento, id_producto, mes, cantidad))
+                if cursor.execute("SELECT id_establecimiento, id_producto, year_month FROM Prod_esta WHERE id_establecimiento = ? AND id_producto = ? AND year_month = ?", (id_establecimiento, id_producto, mes)).fetchone() is None:
+                    cursor.execute("INSERT INTO Prod_esta (id_establecimiento, id_producto, year_month, cantidad) VALUES (?, ?, ?, ?)", (id_establecimiento, id_producto, mes, cantidad))
 
     conn.commit()
     conn.close()
