@@ -7,3 +7,6 @@ app/static/.webassets-cache
 venv
 /app/static/media/**
 !/app/static/media/.keep
+*.xlsx
+geckodriver.log
+geckodriver
