@@ -10,3 +10,4 @@ venv
 *.xlsx
 geckodriver.log
 geckodriver
+db

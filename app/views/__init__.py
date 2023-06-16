@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, url_for, redirect, make_response, send_from_directory, request
-from ..models import Bar
+from ..models import Establecimiento as Bar
 from sqlalchemy import desc, asc
 
 app = Blueprint('main', __name__)

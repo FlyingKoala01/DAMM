@@ -6,4 +6,4 @@ class Establecimiento(db.Model):
     nombre = db.Column(db.String(80))
     direccion = db.Column(db.String(80), nullable=True)
     id_distribuidor = db.Column(db.Integer, db.ForeignKey('distribuidor.id'))
-    nota = db.Column(db.Integer)
+    nota = db.Column(db.Integer, nullable=True)

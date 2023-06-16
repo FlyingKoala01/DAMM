@@ -3,8 +3,9 @@ Computes the grade of each local according to data stored in the database.
 """
 
 import sqlite3
-from social_net import social_net
 from math import log
+
+social_net = {}
 
 DB_PATH='app/damm.db'
 months=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec"]
