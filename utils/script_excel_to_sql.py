@@ -37,6 +37,10 @@ def main():
     files = glob.glob("db/*.xlsx")
     print(f"Se han encontrado {len(files)} archivos .xlsx para entrar en la base de datos.")
 
+    if len(files) == 0:
+        print("Descarga los archivos .xlsx y ponlos en una carpeta llamada db.")
+        return
+
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
