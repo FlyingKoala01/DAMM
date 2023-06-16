@@ -31,26 +31,3 @@ def leaderboard():
         bars_page = Bar.query.order_by(sort_order(column_mapping[sort_by])).paginate(page, per_page, error_out=False)
 
     return render_template('pages/leaderboard.html.j2', bars_page=bars_page, sort_order=sort_order, sort_by=sort_by)
-
-@app.route('/settings', methods=['GET', 'POST'])
-def settings():
-    if request.method == 'POST':
-        new_parameters = {}
-        for parameter in request.form:
-            new_parameters[parameter] = request.form[parameter]
-
-        with open('PARAMETERS', 'w') as f:
-            for parameter, value in new_parameters.items():
-                f.write(f"{parameter}={value}\n")
-
-        return "Parameters saved successfully."
-
-    # Read the parameters from the file
-    parameters = {}
-    with open('app/PARAMETERS', 'r') as f:
-        for line in f:
-            if line.strip() and not line.startswith('#'):
-                parameter, value = line.strip().split('=')
-                parameters[parameter] = value
-
-    return render_template('pages/settings.html.j2', parameters=parameters)
