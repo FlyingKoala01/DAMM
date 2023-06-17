@@ -2,91 +2,170 @@
 Computes the grade of each local according to data stored in the database. 
 """
 
-import sqlite3
+import sqlite3, sys
 from math import log
-
-social_net = {}
+from datetime import datetime
+from .time_utils import *
+from .script_excel_to_sql import SAFE_MODE
 
 DB_PATH='app/damm.db'
-months=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec"]
 
 SOCIAL_NETWORKS_WEIGHT=0.5
-DATABASE_SALES_WEIGHT=0.5
-con=sqlite3.connect(DB_PATH)
-cur=con.cursor()	
+DATABASE_SALES_WEIGHT=0.1
 
-con.close()
+WEIGHTS = None
 
+def set_weigths():
+    global WEIGHTS
 
-def weightLocal(local,weightings,month=None,social_networks_grade=None):
-	"""
-	Returns a weighting from the indicated bar in the indicated month. 
-	If the month is not specified, a global score is returned.
-	"""
-	con=sqlite3.connect(DB_PATH)
-	cur=con.cursor()
-	if month==None:
-		data=cur.execute(f"select id_producto,sum(cantidad) from prod_esta where id_establecimiento='{local}' group by id_producto;").fetchall()	
-		samples=cur.execute(f"select count(DISTINCT year_month) from prod_esta where id_establecimiento='{local}';").fetchone()[0]
-	else:
-		data=cur.execute(f"select id_producto,cantidad from prod_esta where id_establecimiento='{local}' and year_month like '{month}%';").fetchall()
-		samples=cur.execute(f"select count(DISTINCT year_month) from prod_esta where id_establecimiento='{local}' and year_month like '{month}%';").fetchone()[0]
+    if WEIGHTS is not None: return
 
-	con.close()
-	if samples==0:
-		return 0
-	weight=sum(weightings[p[0]]*p[1] for p in data)
-	if social_networks_grade==None:
-		return weight/samples
-	return social_networks_grade*SOCIAL_NETWORKS_WEIGHT+DATABASE_SALES_WEIGHT*weight/samples
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Haciendo la query una unica vez y pasando los resultados como parámetros.
+    WEIGHTS=dict(cursor.execute("select id,peso from producto;").fetchall())
+
+    conn.close()
+
+def cache_last_note():
+    """
+    Puts the last note of a bar into its cache, so queries are faster.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_nota_id_establecimiento ON nota (id_establecimiento);")
+    conn.commit()
+
+    cursor.execute("\
+        UPDATE establecimiento \
+        SET nota = (\
+            SELECT nota \
+            FROM nota \
+            WHERE id_establecimiento = establecimiento.id \
+            ORDER BY mes DESC \
+            LIMIT 1\
+        ),\
+        nota_anterior = (\
+            SELECT nota \
+            FROM nota \
+            WHERE id_establecimiento = establecimiento.id \
+            ORDER BY mes DESC \
+            LIMIT 1 OFFSET 1\
+        );")
+
+    conn.commit()
+    conn.close()
+
+def weightLocal(bar_id, month):
+    """
+    Returns a weighting from the indicated bar in the indicated month. 
+    If the month is not specified, a global score is returned.
+    """
+    con=sqlite3.connect(DB_PATH)
+    cur=con.cursor()
+
+    def weight_in_month(month):
+        data = cur.execute("SELECT id_producto, cantidad FROM venta WHERE id_establecimiento = ? AND mes = ?", (bar_id, month)).fetchall()
+        return sum(WEIGHTS[p[0]]*p[1] for p in data)/len(data) if len(data) > 0 else 0
+    def social_in_month(month):
+        data = cur.execute("SELECT valoracion FROM valoracion WHERE id_establecimiento = ? AND mes = ?", (bar_id, month)).fetchone()
+        return data[0] if data is not None else 0
+
+    sales_weight = sum([
+        weight_in_month(month),
+        weight_in_month(one_month_ago(month)),
+        weight_in_month(one_year_ago(month))
+    ])
+
+    social_weigth = sum([
+        social_in_month(month),
+        social_in_month(one_month_ago(month)),
+        social_in_month(one_year_ago(month))
+    ])
+
+    con.close()
+    return social_weigth*SOCIAL_NETWORKS_WEIGHT+DATABASE_SALES_WEIGHT*sales_weight
 
 
 def fromWeightToGrade(l):
-	"""
-	Performs a logarithmic conversion of the given list to convert the values on a scale from 0 to 10.
-	"""
-	grade_max=10
-	grade_min=1
-	max_value=max(l)
-	if max_value==0:
-		return [0 for i in range(len(l))]
-	ret=[]
-	for value in l:
-		if value<0:
-			ret.append(0)
-		else:
-			ret.append(grade_min+(grade_max-grade_min)*log(value+1)/log(max_value+1))
-	return ret
+    """
+    Performs a logarithmic conversion of the given list to convert the values on a scale from 0 to 10.
+    In other words, it normalizes the value between 0 and 10
+    """
+    grade_max=10
+    grade_min=1
+    max_value=max(l)
+    if max_value==0:
+        return [0 for i in range(len(l))]
+    ret=[]
+    for value in l:
+        if value<0:
+            ret.append(0)
+        else:
+            ret.append(grade_min+(grade_max-grade_min)*log(value+1)/log(max_value+1))
+    return ret
 
-	
-def rate():
-	con=sqlite3.connect(DB_PATH)
-	cur=con.cursor()
-	bars=cur.execute("select id from establecimiento;").fetchall()
-	weightings=dict(con.execute("select id,peso from productos;").fetchall())
-	con.close()
-	results=[[] for i in range(len(months))]
-	
-	for b in bars:
-		bar=b[0]
-		for i,month in enumerate(months):
-			results[i].append(weightLocal(bar,month=month,weightings=weightings))
 
-	grades=[]
-	for result in results:
-		grades.append(fromWeightToGrade(result))
+def calc_rate(month):
+    set_weigths()
 
-	avg=fromWeightToGrade([weightLocal(bar[0],social_networks_grade=social_net[bar[0]],weightings=weightings) for bar in bars])
-	
-	
-	con=sqlite3.connect(DB_PATH)
-	cur=con.cursor()	
-	for i,bar in enumerate(bars):
-		cur.execute(f"update establecimiento set average_grade={avg[i]} where id='{bar[0]}';")
-		cur.execute(f"update establecimiento set Nota_{months[0]}={grades[0][i]},Nota_{months[1]}={grades[1][i]},Nota_{months[2]}={grades[2][i]},Nota_{months[3]}={grades[3][i]},Nota_{months[4]}={grades[4][i]},Nota_{months[5]}={grades[5][i]},Nota_{months[6]}={grades[6][i]},Nota_{months[7]}={grades[7][i]},Nota_{months[8]}={grades[8][i]},Nota_{months[9]}={grades[9][i]},Nota_{months[10]}={grades[10][i]},Nota_{months[11]}={grades[11][i]} where id='{bar[0]}';")
-	con.commit()
-	con.close()
+    if month is None:
+        current_date = datetime.now()
+        month = datetime(current_date.year, current_date.month, 1)
 
-if __name__ == '__main__':
-	rate()
+    conn=sqlite3.connect(DB_PATH)
+    cur=conn.cursor()
 
+    data = cur.execute("SELECT id FROM establecimiento;").fetchall()
+    output = []
+
+    print(f"Calculando nota para {len(data)} establecimientos ")
+
+    for i, b in enumerate(data):
+        if i%25==0:
+            print('.', end='')
+            sys.stdout.flush()
+
+        bar_id=b[0]
+        output.append(weightLocal(bar_id, month))
+
+    print("Normalizando valores.")
+    normalized_output = fromWeightToGrade(output)
+
+    print("Guardando valores en la base de datos ")
+    for i, b in enumerate(data):
+        if i%250==0:
+            print('.', end='')
+            sys.stdout.flush()
+
+        bar_id=b[0]
+
+        if (not SAFE_MODE) or cur.execute("SELECT COUNT(*) FROM nota WHERE id_establecimiento = ? AND mes = ?", (bar_id, month)).fetchone()[0] == 0:
+            cur.execute("INSERT INTO nota (id_establecimiento, mes, nota) VALUES (?, ?, ?)", (bar_id, month, normalized_output[i]))
+
+    conn.commit()
+    conn.close()
+    print(f"Notas para mes {month} calculadas correctamente.")
+
+def calc_rate_all_months():
+    """
+    Mira todos los meses en los que ha habido ventas y pone la misma valoración
+    en todos. Útil para tener valores de ejemplo al principio de todo.
+    """
+    print("Calculando nota para todos los meses ...")
+
+    conn=sqlite3.connect(DB_PATH)
+    cursor=conn.cursor()
+
+    # Obtengo bares que tienen una direccion definida
+    cursor.execute("SELECT DISTINCT mes FROM venta")
+    months = cursor.fetchall()
+
+    conn.close()
+
+    print(f"Número de meses para valorar: {len(months)}")
+
+    for month in months:
+        calc_rate(month[0])

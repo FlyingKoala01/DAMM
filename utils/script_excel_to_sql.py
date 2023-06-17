@@ -3,6 +3,12 @@ import sqlite3, glob, random, sys, math
 from datetime import datetime
 
 DATABASE = "app/damm.db"
+# SAFE_MODE comprueba que antes de añadir una venta esta no exista.
+# El problema es que este modo hace que el programa vaya MUCHO más lento.
+SAFE_MODE = False
+
+if not SAFE_MODE:
+    print("Atención! Modo seguro desactivado. No se compruebara si una venta ya está en la base de datos.")
 
 def convert_string_to_date(string):
     # Define the month abbreviations and their corresponding numbers
@@ -87,13 +93,14 @@ def main():
             # A partir de aqui solo falta entrar en la base de datos las ventas
 
             for mes in df.columns[5:17]:
-                if not (isinstance(mes, (float, int)) and not math.isnan(mes)): continue
+                cantidad = row[mes]
+                if not (isinstance(cantidad, (float, int)) and not math.isnan(cantidad)): continue
 
-                cantidad = round(mes)
+                cantidad = round(cantidad)
                 parsed_mes = convert_string_to_date(mes)
-                
+
                 # Verificar si ya existe registro
-                if cursor.execute("SELECT 't' FROM venta WHERE id_establecimiento = ? AND id_producto = ? AND mes = ?", (id_establecimiento, id_producto, parsed_mes)).fetchone() is None:
+                if (not SAFE_MODE) or cursor.execute("SELECT * FROM venta WHERE id_establecimiento = ? AND id_producto = ? AND mes = ?", (id_establecimiento, id_producto, parsed_mes)).fetchone() is None:
                     cursor.execute("INSERT INTO venta (id_establecimiento, id_producto, mes, cantidad) VALUES (?, ?, ?, ?)", (id_establecimiento, id_producto, parsed_mes, cantidad))
 
         print("\nArchivo procesado correctamente.")
