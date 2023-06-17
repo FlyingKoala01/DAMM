@@ -6,7 +6,7 @@ from sys import argv
 if is_production() or (len(argv) == 2 and argv[1] == '--listen-all'):
     from gevent.pywsgi import WSGIServer
 
-    http_server = WSGIServer(('', 5000), app)
+    http_server = WSGIServer(('', 5003), app)
     http_server.serve_forever()
 
 else:
