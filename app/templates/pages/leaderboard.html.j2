@@ -7,136 +7,116 @@
       <div
         class="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
         <div class="flex items-center flex-1 space-x-4">
+          <form action="">
+            <input type="search" name="q" value="{{ filter_name }}" class="rounded-md border-gray-500"
+                   style="border: black;background: #eaeaea;font-size: 12px;line-height: 12px;"/>
+            <input type="submit" value="Search" class="hover:font-extrabold"
+                   style="color: #ff4b4b;text-decoration: underline;font-style: italic;font-size: 80%;cursor: pointer;"/>
+          </form>
+        </div>
+        <div class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
           <h5>
-            <span class="text-gray-500">All Bars:</span>
+            <span class="text-gray-500">Shown bars:</span>
             <span class="">{{ bars_page.total }}</span>
           </h5>
-        </div>
-        <div
-          class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-          <a href="{{ url_for('.settings')}}">
-            <div type="button"
-              class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200">
-              <img class="w-4 h-4 mr-2" src="{{ url_for('static', filename='images/gear.svg') }}" alt="gear" />
-              Ajustes
-            </div>
-          </a>
         </div>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-sm text-left text-gray-500">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" class="p-3 w-28">
+              <th scope="col" class="p-3 w-28" colspan="2">
                 <a
-                  href="{{ url_for('.leaderboard', sort_by='position', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Position
-                  {% if sort_by == 'position' %}
-                  {% if sort_order == 'asc' %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                  </svg>
-                  {% else %}
+                  href="{{ url_for('.leaderboard', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Rank #
+                  {% if sort_order == 'desc' %}
                   <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
                   </svg>
-                  {% endif %}
+                  {% else %}
+                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                  </svg>
                   {% endif %}
                 </a>
               </th>
               <th scope="col" class="px-4 py-3">
-                <a
-                  href="{{ url_for('.leaderboard', sort_by='name', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Bar
-                  {% if sort_by == 'name' %}
-                  {% if sort_order == 'asc' %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                  </svg>
-                  {% else %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
-                  </svg>
-                  {% endif %}
-                  {% endif %}
-                </a>
+                Name
+              </th>
+              <th scope="col" colspan="2" class="px-4 py-3">
+                Grade
               </th>
               <th scope="col" class="px-4 py-3">
-                <a
-                  href="{{ url_for('.leaderboard', sort_by='grade', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Grade
-                  {% if sort_by == 'grade' %}
-                  {% if sort_order == 'asc' %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                  </svg>
-                  {% else %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
-                  </svg>
-                  {% endif %}
-                  {% endif %}
-                </a>
-              </th>
-              <th scope="col" class="px-4 py-3">
-                <a
-                  href="{{ url_for('.leaderboard', sort_by='sales', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Sales
-                  {% if sort_by == 'sales' %}
-                  {% if sort_order == 'asc' %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                  </svg>
-                  {% else %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
-                  </svg>
-                  {% endif %}
-                  {% endif %}
-                </a>
-              </th>
-              <th scope="col" class="px-4 py-3">
-                <a
-                  href="{{ url_for('.leaderboard', sort_by='progress', sort_order=(sort_order == 'asc' and 'desc' or 'asc')) }}">Progress
-                  {% if sort_by == 'progress' %}
-                  {% if sort_order == 'asc' %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                  </svg>
-                  {% else %}
-                  <svg class="w-3 h-3 ml-1 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 14l7 7m0 0l7-7m-7 7V3"></path>
-                  </svg>
-                  {% endif %}
-                  {% endif %}
-                </a>
+                Sales
               </th>
             </tr>
           </thead>
 
 
           <tbody>
-            <tr class="border-b  hover:bg-gray-100 ">
-              {% for eachbar in bars_page.items %}
+          {% if bars_page.has_prev %}
+            {% set i=(bars_page.prev_num) * bars_page.per_page %}
+          {% else %}
+            {% set i=0 %}
+          {% endif %}
 
-              <td class="w-4 px-4 py-3">
+            {% for eachbar in bars_page.items %}
+
+            {% if sort_order == 'desc' %}
+              {% set position = i+loop.index %}
+            {% else %}
+              {% set position =  bars_page.total-(i+loop.index)+1 %}
+            {% endif %}
+
+            {% if filter_name %}
+              {% set position = eachbar.get_current_position() %}
+            {% endif %}
+
+            <tr class="border-b hover:bg-gray-100 ">
+              <td class="w-4 pl-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                 <div class="flex items-center">
-                  {{eachbar.position}}
+                  {{ position }}
                 </div>
               </td>
-              <th scope="row" class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
-                {{ eachbar.name }}
-              </th>
-              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
+              <td class="w-4 pr-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                {% set progress = position - eachbar.get_previous_position() %}
                 <div class="flex items-center">
-                  {% set full_beers = eachbar.grade | int %}
-                  {% set half_beer = eachbar.grade - full_beers > 0.5 %}
+                  {% if progress > 1 %}
+                  <img src="{{ url_for('static', filename='images/arrow-double-up.svg') }}" alt="double-up"
+                    class="w-3 h-3 mr-1 text-green-50">
+                  {% elif progress > 0%}
+                  <img src="{{ url_for('static', filename='images/arrow-up.svg') }}" alt="up"
+                    class="w-3 h-3 mr-1 text-green">
+                  {% elif progress == 0 %}
+                  <img src="{{ url_for('static', filename='images/equal.svg') }}" alt="equal" class="w-3 h-3 mr-1">
+                  {% elif progress < -1 %} <img
+                    src="{{ url_for('static', filename='images/arrow-double-up.svg') }}" alt="down"
+                    class="w-3 h-3 mr-1 text-red transform rotate-180">
+                  {% elif progress < 0%} <img src="{{ url_for('static', filename='images/arrow-up.svg') }}"
+                    alt="down" class="w-3 h-3 mr-1 text-red transform rotate-180">
+                  {% endif %}
+                  <span
+                    class="ml-1 text-xs {% if progress > 0 %}text-green-500{% elif progress < 0 %}text-red-500{% else %}text-gray-500{% endif %}">
+                    {{ progress }}
+                  </span>
+                </div>
+
+              </td>
+              <th scope="row" class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
+                {{ eachbar.nombre }}
+              </th>
+
+              <td class="pl-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
+                <div class="flex items-center">
+                  <span class="ml-1 text-gray-500 ">{{ eachbar.nota|default(0)|round(2) }}</span>
+                </div>
+              </td>
+
+              <td class="pr-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
+                <div class="flex items-center">
+                  {% set full_beers = (eachbar.nota/2) | int %}
+                  {% set half_beer = (eachbar.nota/2) - full_beers > 0.5 %}
 
                   {% for _ in range(full_beers) %}
                   <img src="{{ url_for('static', filename='images/beer.svg') }}" alt="beer"
@@ -147,11 +127,8 @@
                   <img src="{{ url_for('static', filename='images/beer-half.svg') }}" alt="beer-half"
                     class="w-5 h-5 mr-2 transform scale-y-[-1] rotate-180 xg:hidden">
                   {% endif %}
-
-                  <span class="ml-1 text-gray-500 ">{{ eachbar.grade }}</span>
-                </div>
-
               </td>
+
               <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap ">
                 <div class="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
@@ -159,29 +136,7 @@
                     <path
                       d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
                   </svg>
-                  {{ eachbar.total_sales }}
-                </div>
-              </td>
-              <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                <div class="flex items-center">
-                  {% if eachbar.progress > 1 %}
-                  <img src="{{ url_for('static', filename='images/arrow-double-up.svg') }}" alt="double-up"
-                    class="w-3 h-3 mr-1 text-green-50">
-                  {% elif eachbar.progress > 0%}
-                  <img src="{{ url_for('static', filename='images/arrow-up.svg') }}" alt="up"
-                    class="w-3 h-3 mr-1 text-green">
-                  {% elif eachbar.progress == 0 %}
-                  <img src="{{ url_for('static', filename='images/equal.svg') }}" alt="equal" class="w-3 h-3 mr-1">
-                  {% elif eachbar.progress < -1 %} <img
-                    src="{{ url_for('static', filename='images/arrow-double-up.svg') }}" alt="down"
-                    class="w-3 h-3 mr-1 text-red transform rotate-180">
-                    {% elif eachbar.progress < 0%} <img src="{{ url_for('static', filename='images/arrow-up.svg') }}"
-                      alt="down" class="w-3 h-3 mr-1 text-red transform rotate-180">
-                      {% endif %}
-                      <span
-                        class="ml-1 {% if eachbar.progress > 0 %}text-green-500{% elif eachbar.progress < 0 %}text-red-500{% else %}text-gray-500{% endif %}">
-                        {{ eachbar.progress }}
-                      </span>
+                  {{ eachbar.total_sales() }}
                 </div>
               </td>
             </tr>
@@ -194,11 +149,20 @@
         <span class="text-sm font-normal text-gray-500">
           Showing
           {% if bars_page.has_prev %}
-          <span class="font-semibold text-gray-900">{{ (bars_page.prev_num - 1) * bars_page.per_page + 1 }}-{{
-            (bars_page.prev_num - 1) * bars_page.per_page + bars_page.items|length }}</span>
+            {% if sort_order == 'desc' %}
+              <span class="font-semibold text-gray-900">{{ bars_page.prev_num * bars_page.per_page + 1 }}-{{
+              bars_page.prev_num * bars_page.per_page + bars_page.items|length }}</span>
+            {% else %}
+              <span class="font-semibold text-gray-900">{{ bars_page.total - (bars_page.prev_num + 1) * bars_page.per_page + 1 }}-{{
+              bars_page.total-(bars_page.prev_num+1) * bars_page.per_page + bars_page.items|length }}</span>
+            {% endif %}
           {% else %}
-          <span class="font-semibold text-gray-900">1-{{
-            bars_page.items|length }}</span>
+            {% if sort_order == 'desc' %}
+              <span class="font-semibold text-gray-900">{{ [1, bars_page.items|length] | min }}-{{ bars_page.items|length }}</span>
+            {% else %}
+              <span class="font-semibold text-gray-900">{{ bars_page.total - bars_page.per_page + 1 }}-{{
+              bars_page.total - bars_page.per_page + bars_page.items|length }}</span>
+            {% endif %}
           {% endif %}
           of
           <span class="font-semibold text-gray-900">{{ bars_page.total }}</span>
@@ -206,7 +170,7 @@
         <ul class="inline-flex items-stretch -space-x-px">
           {% if bars_page.has_prev %}
           <li>
-            <a href="{{ url_for('.leaderboard', page=bars_page.prev_num, sort_by=sort_by, sort_order=sort_order) }}"
+            <a href="{{ url_for('.leaderboard', page=bars_page.prev_num, sort_order=sort_order) }}"
               class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
               <span class="sr-only">Previous</span>
               <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
@@ -221,7 +185,7 @@
           {% for page_num in bars_page.iter_pages() %}
           {% if page_num %}
           <li>
-            <a href="{{ url_for('.leaderboard', page=page_num, sort_by=sort_by, sort_order=sort_order) }}"
+            <a href="{{ url_for('.leaderboard', page=page_num, sort_order=sort_order) }}"
               class="flex items-center justify-center px-3 py-2 text-sm leading-tight {{ 'text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700' if page_num == bars_page.page else 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700' }}">
               {{ page_num }}
             </a>
@@ -230,7 +194,7 @@
           {% endfor %}
           {% if bars_page.has_next %}
           <li>
-            <a href="{{ url_for('.leaderboard', page=bars_page.next_num, sort_by=sort_by, sort_order=sort_order) }}"
+            <a href="{{ url_for('.leaderboard', page=bars_page.next_num, sort_order=sort_order) }}"
               class="flex items-center justify-center h-full py-1.5 px-3 -ml-px text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
               <span class="sr-only">Next</span>
               <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
@@ -247,12 +211,5 @@
     </div>
   </div>
 </section>
-
-<script>
-  function onError() {
-    this.onerror = null;
-    this.parentNode.children[0].srcset = this.parentNode.children[1].srcset = this.src;
-  }
-</script>
 
 {% endblock %}
